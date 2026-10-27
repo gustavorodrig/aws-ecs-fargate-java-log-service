@@ -6,7 +6,6 @@ import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +21,9 @@ import javax.jms.Session;
 @Profile("local")
 public class JmsConfigLocal {
 
+    @Value("${aws.local.endpoint:http://localhost:4566}")
+    private String localEndpoint;
+
     private SQSConnectionFactory sqsConnectionFactory;
 
     @Bean
@@ -30,7 +32,7 @@ public class JmsConfigLocal {
                 new ProviderConfiguration(),
                 AmazonSQSClient.builder()
                         .withEndpointConfiguration(
-                                new AwsClientBuilder.EndpointConfiguration("http://localhost:4566",
+                                new AwsClientBuilder.EndpointConfiguration(localEndpoint,
                                         Regions.SA_EAST_1.getName()))
                         .withCredentials(new DefaultAWSCredentialsProviderChain())
                         .build());
